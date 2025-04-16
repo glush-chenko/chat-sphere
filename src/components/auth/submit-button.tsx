@@ -1,7 +1,7 @@
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { signInAnonymously } from 'firebase/auth';
+import { signInAnonymously, RecaptchaVerifier } from 'firebase/auth';
 import { firebaseAuth } from '../../firebase/firebase-config.ts';
 import { Session, useSession } from '../../Session-context.tsx';
 import { useNavigate } from 'react-router';
@@ -12,20 +12,35 @@ export const SubmitButton = () => {
 
   const handleAnonymousSignIn = async () => {
     try {
-      const userCredential = await signInAnonymously(firebaseAuth);
-      const user = userCredential.user;
+      const recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'recaptcha-container', {});
 
-      const userSession: Session = {
-        user: {
-          name: 'Анонимный пользователь',
-          email: user.email || '',
-          image: user.photoURL || '',
-        },
-      };
-      setSession(userSession);
-      navigate('/', { replace: true });
+      await recaptchaVerifier.render();
+      const response = await recaptchaVerifier.verify();
+
+      if (response) {
+        const userCredential = await signInAnonymously(firebaseAuth);
+        const user = userCredential.user;
+
+        const userSession: Session = {
+          user: {
+            name: 'Аноним',
+            email: user.email || '',
+            image: user.photoURL || '',
+          },
+        };
+
+        setSession(userSession);
+        navigate('/', { replace: true });
+      } else {
+        console.error('Капча не пройдена');
+      }
     } catch (error) {
       console.error('Ошибка анонимной аутентификации:', error);
+    } finally {
+      const recaptchaContainer = document.getElementById('recaptcha-container');
+      if (recaptchaContainer) {
+        recaptchaContainer.remove();
+      }
     }
   };
 

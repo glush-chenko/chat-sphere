@@ -1,3 +1,17 @@
 #root {
   width: 100%;
 }
+
+#recaptcha-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 40%;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  width: 304px;
+  height: 78px;
+}

@@ -10,6 +10,8 @@ import { SubmitButton } from '../../components/auth/submit-button.tsx';
 import { useCallback } from 'react';
 import 'firebase/compat/auth';
 import { AuthProvider, AuthResponse } from '@toolpad/core';
+import { firebaseAuth } from '../../firebase/firebase-config.ts';
+import { RecaptchaVerifier } from 'firebase/auth';
 
 export const SignIn = () => {
   const { session, setSession, loading } = useSession();
@@ -18,11 +20,17 @@ export const SignIn = () => {
   const signIn = useCallback(async (
     provider: AuthProvider,
     formData: any,
-    callbackUrl: string,
+    callbackUrl: string | undefined,
   ): Promise<AuthResponse> => {
     let result;
     try {
+      const recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'recaptcha-container', {});
+
+      await recaptchaVerifier.render();
+      await recaptchaVerifier.verify();
+
       if (provider.id === 'google') {
+        // result = await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
         result = await signInWithGoogle();
       }
       if (provider.id === 'credentials') {
@@ -33,10 +41,11 @@ export const SignIn = () => {
           return { error: 'Почта и пароль обязательны' };
         }
 
+        // result = await signInWithEmailAndPassword(firebaseAuth, email, password);
         result = await signInWithCredentials(email, password);
       }
 
-      if (result?.success && result?.user) {
+      if (result?.user) {
         // Convert Firebase user to Session format
         const userSession: Session = {
           user: {
@@ -49,9 +58,14 @@ export const SignIn = () => {
         navigate(callbackUrl || '/', { replace: true });
         return {};
       }
-      return { error: result?.error || 'Не удалось войти в систему' };
+      return { error: 'Не удалось войти в систему' };
     } catch (error) {
       return { error: 'Произошла ошибка входа в систему' };
+    } finally {
+      const recaptchaContainer = document.getElementById('recaptcha-container');
+      if (recaptchaContainer) {
+        recaptchaContainer.remove();
+      }
     }
   }, [navigate, setSession]);
 

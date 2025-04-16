@@ -9,6 +9,9 @@ import { useSession } from '../../Session-context.tsx';
 function CustomAccount() {
   return (
     <Account
+      localeText={{
+        accountSignOutLabel: "Выйти"
+      }}
       slotProps={{
         preview: {
           slotProps: {
