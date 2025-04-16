@@ -10,7 +10,7 @@ import logo from "./assets/main-img.png"
 // import {ruRU} from '@mui/material/locale';
 
 const BRANDING = {
-  logo: <img src={logo} alt="MUI logo" />,
+  logo: <img src={logo} alt="MUI logo" width="40px" height="40px"/>,
   title: 'Chat Sphere',
 };
 

@@ -17,7 +17,7 @@ export const SubmitButton = () => {
 
       const userSession: Session = {
         user: {
-          name: user.displayName || "",
+          name: "Анонимный пользователь",
           email: user.email || "",
           image: user.photoURL || "",
         },
