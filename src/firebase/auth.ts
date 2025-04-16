@@ -7,6 +7,8 @@ import {
   signOut,
 } from 'firebase/auth';
 import { firebaseAuth } from './firebase-config.ts';
+import { AuthResponse } from '@toolpad/core';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -66,4 +68,23 @@ export const firebaseSignOut = async () => {
 // Auth state observer
 export const onAuthStateChanged = (callback: (user: any) => void) => {
   return firebaseAuth.onAuthStateChanged(callback);
+};
+
+export const registerUser = async (
+  email: string,
+  password: string,
+): Promise<AuthResponse> => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+    const user = userCredential.user;
+
+    await sendEmailVerification(user);
+
+    return {
+      success: 'Регистрация успешна!',
+      error: '',
+    };
+  } catch (error) {
+    return { error: 'Произошла ошибка регистрации' };
+  }
 };

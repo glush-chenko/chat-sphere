@@ -5,12 +5,13 @@ import { PageContainer } from '@toolpad/core/PageContainer';
 import { Account } from '@toolpad/core/Account';
 
 import { useSession } from '../../Session-context.tsx';
+import { AppTitle } from './app-title.tsx';
 
 function CustomAccount() {
   return (
     <Account
       localeText={{
-        accountSignOutLabel: "Выйти"
+        accountSignOutLabel: 'Выйти',
       }}
       slotProps={{
         preview: {
@@ -43,7 +44,24 @@ export const Layout = () => {
   }
 
   return (
-    <DashboardLayout slots={{ toolbarAccount: CustomAccount }} hideNavigation>
+    <DashboardLayout
+      slots={{
+        toolbarAccount: CustomAccount,
+        appTitle: AppTitle,
+      }}
+      hideNavigation
+      sx={{
+        '& .MuiToolbar-root': {
+          '& .MuiStack-root:first-child': {
+            flexGrow: 1,
+            '& .MuiPaper-root': {
+              flexGrow: 1,
+              justifyContent: 'center',
+            },
+          },
+        },
+      }}
+    >
       <PageContainer>
         <Outlet />
       </PageContainer>

@@ -6,7 +6,7 @@ export const EmailField = () => {
   return (
     <TextField
       id="input-with-icon-textfield"
-      label="Почта"
+      label="Email"
       name="email"
       type="email"
       size="small"
