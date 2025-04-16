@@ -1,11 +1,11 @@
-import FormControl from "@mui/material/FormControl";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import Visibility from "@mui/icons-material/Visibility";
-import {useState, MouseEvent} from "react";
+import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import InputLabel from '@mui/material/InputLabel';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Visibility from '@mui/icons-material/Visibility';
+import { useState, MouseEvent } from 'react';
 
 export const PasswordField = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,7 +17,7 @@ export const PasswordField = () => {
   };
 
   return (
-    <FormControl sx={{my: 2}} fullWidth variant="outlined">
+    <FormControl sx={{ my: 2 }} fullWidth variant="outlined">
       <InputLabel size="small" htmlFor="outlined-adornment-password">
         Пароль *
       </InputLabel>
@@ -36,9 +36,9 @@ export const PasswordField = () => {
               size="small"
             >
               {showPassword ? (
-                <VisibilityOff fontSize="inherit"/>
+                <VisibilityOff fontSize="inherit" />
               ) : (
-                <Visibility fontSize="inherit"/>
+                <Visibility fontSize="inherit" />
               )}
             </IconButton>
           </InputAdornment>
@@ -47,4 +47,4 @@ export const PasswordField = () => {
       />
     </FormControl>
   );
-}
+};
