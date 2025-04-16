@@ -7,15 +7,19 @@ import { PasswordField } from '../../components/auth/password-field.tsx';
 import { EmailField } from '../../components/auth/email-field.tsx';
 import backgroundImage from '../../assets/backg.png';
 import { SubmitButton } from '../../components/auth/submit-button.tsx';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import 'firebase/compat/auth';
 import { AuthProvider, AuthResponse } from '@toolpad/core';
 import { firebaseAuth } from '../../firebase/firebase-config.ts';
 import { RecaptchaVerifier } from 'firebase/auth';
+import { ForgotPasswordLink } from '../../components/auth/forgot-password-link.tsx';
+import { Signup } from '../../components/signup';
+import Link from '@mui/material/Link';
 
 export const SignIn = () => {
   const { session, setSession, loading } = useSession();
   const navigate = useNavigate();
+  const [openSignup, setOpenSignup] = useState(false);
 
   const signIn = useCallback(async (
     provider: AuthProvider,
@@ -26,6 +30,10 @@ export const SignIn = () => {
     try {
       const recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'recaptcha-container', {});
 
+      const recaptchaContainer = document.getElementById('recaptcha-container');
+      if (recaptchaContainer) {
+        recaptchaContainer.style.display = "unset";
+      }
       await recaptchaVerifier.render();
       await recaptchaVerifier.verify();
 
@@ -69,6 +77,14 @@ export const SignIn = () => {
     }
   }, [navigate, setSession]);
 
+  const handleOpenSignup = useCallback(() => {
+    setOpenSignup(true);
+  }, []);
+
+  const handleCloseSignup = useCallback(() => {
+    setOpenSignup(false);
+  }, []);
+
   if (loading) {
     return <LinearProgress />;
   }
@@ -78,37 +94,49 @@ export const SignIn = () => {
   }
 
   return (
-    <SignInPage
-      sx={{
-        backgroundImage: `url(${backgroundImage})`,
-        '& .MuiContainer-root': {
-          maxWidth: '544px',
-        },
-        '& .MuiBox-root:first-child': {
-          padding: '2.6rem',
-        },
-      }}
-      providers={[
-        { id: 'google', name: 'Google' },
-        { id: 'credentials', name: 'Credentials' },
-      ]}
-      localeText={{
-        providerSignInTitle: (provider: string) => `Войдите с помощью ${provider}`,
-      }}
-      signIn={signIn}
-      slots={{
-        title: () => <h2 style={{ marginBottom: 8 }}>Войти</h2>,
-        subtitle: () => <></>,
-        emailField: EmailField,
-        passwordField: PasswordField,
-        submitButton: SubmitButton,
-        rememberMe: () => <></>,
-      }}
-      slotProps={{
-        emailField: { autoFocus: true },
-        passwordField: { autoComplete: 'off' },
-        rememberMe: { hidden: true },
-      }}
-    />
+    <>
+      <SignInPage
+        sx={{
+          backgroundImage: `url(${backgroundImage})`,
+          '& .MuiContainer-root': {
+            maxWidth: '544px',
+          },
+          '& .MuiBox-root:first-child': {
+            padding: '2.6rem',
+          },
+        }}
+        providers={[
+          { id: 'google', name: 'Google' },
+          { id: 'credentials', name: 'Credentials' },
+        ]}
+        localeText={{
+          providerSignInTitle: (provider: string) => `Войдите с помощью ${provider}`,
+        }}
+        signIn={signIn}
+        slots={{
+          title: () => <h2 style={{ marginBottom: 8 }}>Войти</h2>,
+          subtitle: () => <></>,
+          emailField: EmailField,
+          passwordField: PasswordField,
+          submitButton: SubmitButton,
+          signUpLink: () => {
+            return (
+              <Link variant="body2" onClick={handleOpenSignup} sx={{ cursor: 'pointer' }}>
+                Регистрация
+              </Link>
+            );
+          },
+          rememberMe: () => <></>,
+          forgotPasswordLink: ForgotPasswordLink,
+        }}
+        slotProps={{
+          emailField: { autoFocus: true },
+          passwordField: { autoComplete: 'off' },
+          rememberMe: { hidden: true },
+        }}
+      />
+
+      <Signup open={openSignup} handleClose={handleCloseSignup} />
+    </>
   );
 };

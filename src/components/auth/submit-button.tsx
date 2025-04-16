@@ -14,6 +14,10 @@ export const SubmitButton = () => {
     try {
       const recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'recaptcha-container', {});
 
+      const recaptchaContainer = document.getElementById('recaptcha-container');
+      if (recaptchaContainer) {
+        recaptchaContainer.style.display = "unset";
+      }
       await recaptchaVerifier.render();
       const response = await recaptchaVerifier.verify();
 
