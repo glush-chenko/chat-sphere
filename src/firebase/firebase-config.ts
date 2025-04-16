@@ -1,8 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import {getFirestore} from "firebase/firestore";
-import {getAnalytics} from "firebase/analytics";
-import {initializeAppCheck, ReCaptchaV3Provider} from "firebase/app-check";
+import { getFirestore } from 'firebase/firestore';
+import { getAnalytics } from 'firebase/analytics';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 const app = initializeApp({
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -18,7 +18,7 @@ const appCheck = initializeAppCheck(app, {
 
   // Optional argument. If true, the SDK automatically refreshes App Check
   // tokens as needed.
-  isTokenAutoRefreshEnabled: true
+  isTokenAutoRefreshEnabled: true,
 });
 
 export const firebaseAuth = getAuth(app);

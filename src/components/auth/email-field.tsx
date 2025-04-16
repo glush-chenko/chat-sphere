@@ -1,6 +1,6 @@
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
 
 export const EmailField = () => {
   return (
@@ -16,7 +16,7 @@ export const EmailField = () => {
         input: {
           startAdornment: (
             <InputAdornment position="start">
-              <AccountCircle fontSize="inherit"/>
+              <AccountCircle fontSize="inherit" />
             </InputAdornment>
           ),
         },
@@ -24,4 +24,4 @@ export const EmailField = () => {
       variant="outlined"
     />
   );
-}
+};

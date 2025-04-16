@@ -10,7 +10,11 @@ function CustomAccount() {
   return (
     <Account
       slotProps={{
-        preview: { slotProps: { avatarIconButton: { sx: { border: '0' } } } },
+        preview: {
+          slotProps: {
+            avatarIconButton: { sx: { border: '0' } },
+          },
+        },
       }}
     />
   );
@@ -42,4 +46,4 @@ export const Layout = () => {
       </PageContainer>
     </DashboardLayout>
   );
-}
+};

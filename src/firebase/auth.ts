@@ -6,7 +6,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import {firebaseAuth} from './firebase-config.ts';
+import { firebaseAuth } from './firebase-config.ts';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -54,7 +54,7 @@ export async function signInWithCredentials(email: string, password: string) {
 export const firebaseSignOut = async () => {
   try {
     await signOut(firebaseAuth);
-    return {success: true};
+    return { success: true };
   } catch (error: any) {
     return {
       success: false,
