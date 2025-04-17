@@ -12,14 +12,15 @@ import 'firebase/compat/auth';
 import { AuthProvider, AuthResponse } from '@toolpad/core';
 import { firebaseAuth } from '../../firebase/firebase-config.ts';
 import { RecaptchaVerifier } from 'firebase/auth';
-import { ForgotPasswordLink } from '../../components/auth/forgot-password-link.tsx';
 import { Signup } from '../../components/signup';
 import Link from '@mui/material/Link';
+import { ForgotPass } from '../../components/forgot-pass';
 
 export const SignIn = () => {
   const { session, setSession, loading } = useSession();
   const navigate = useNavigate();
   const [openSignup, setOpenSignup] = useState(false);
+  const [openForgotPassword, setOpenForgotPassword] = useState(false);
 
   const signIn = useCallback(async (
     provider: AuthProvider,
@@ -85,6 +86,14 @@ export const SignIn = () => {
     setOpenSignup(false);
   }, []);
 
+  const handleOpenForgotPassword = useCallback(() => {
+    setOpenForgotPassword(true);
+  }, []);
+
+  const handleCloseForgotPassword = useCallback(() => {
+    setOpenForgotPassword(false);
+  }, []);
+
   if (loading) {
     return <LinearProgress />;
   }
@@ -127,7 +136,13 @@ export const SignIn = () => {
             );
           },
           rememberMe: () => <></>,
-          forgotPasswordLink: ForgotPasswordLink,
+          forgotPasswordLink: () => {
+            return (
+              <Link variant="body2" onClick={handleOpenForgotPassword} sx={{ cursor: 'pointer' }}>
+                Забыли пароль?
+              </Link>
+            )
+          },
         }}
         slotProps={{
           emailField: { autoFocus: true },
@@ -137,6 +152,7 @@ export const SignIn = () => {
       />
 
       <Signup open={openSignup} handleClose={handleCloseSignup} />
+      <ForgotPass open={openForgotPassword} handleClose={handleCloseForgotPassword}/>
     </>
   );
 };

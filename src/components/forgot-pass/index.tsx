@@ -6,30 +6,41 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { registerUser } from '../../firebase/auth.ts';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { firebaseAuth } from '../../firebase/firebase-config.ts';
+import { useNotifications } from '@toolpad/core';
+import { useNavigate } from 'react-router';
 
-interface SignupProps {
+interface ForgotPassProps {
   open: boolean,
   handleClose: () => void;
 }
 
-export const Signup = (props: SignupProps) => {
+export const ForgotPass = (props: ForgotPassProps) => {
   const { open, handleClose } = props;
+  const notifications = useNotifications();
+  const navigate = useNavigate();
 
-  const handleRegister = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+  const handleForgotPass = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries((formData as any).entries());
     const email = formJson.email;
-    const password = formJson.password;
 
-    const response = await registerUser(email, password);
-    if (response.error) {
-      console.error(response.error);
-    } else {
-      console.log(response.success);
+    try {
+      await sendPasswordResetEmail(firebaseAuth, email);
+      notifications.show('Письмо для сброса пароля отправлено на ваш email.', {
+        severity: 'info',
+        autoHideDuration: 3000,
+      });
+    } catch (error) {
+      notifications.show('Ошибка при отправке письма', {
+        severity: 'error',
+        autoHideDuration: 3000,
+      });
     }
-  }, []);
+    navigate('../');
+  }, [navigate, notifications]);
 
   return (
     <Dialog
@@ -38,15 +49,17 @@ export const Signup = (props: SignupProps) => {
       slotProps={{
         paper: {
           component: 'form',
-          onSubmit: handleRegister,
+          onSubmit: handleForgotPass,
           sx: { padding: '1rem' },
         },
       }}
     >
-      <DialogTitle sx={{ textAlign: 'center', fontSize: '1.5rem' }}>Регистрация</DialogTitle>
+      <DialogTitle sx={{ textAlign: 'center', fontSize: '1.5rem' }}>
+        Восстановление пароля
+      </DialogTitle>
       <DialogContent>
         <DialogContentText sx={{ textAlign: 'center' }}>
-          Пожалуйста, введите свой email и пароль для регистрации.
+          Введите свой email для сброса.
         </DialogContentText>
         <TextField
           autoFocus
@@ -59,20 +72,10 @@ export const Signup = (props: SignupProps) => {
           margin="normal"
           required
         />
-        <TextField
-          label="Пароль"
-          type="password"
-          id="password"
-          name="password"
-          fullWidth
-          margin="normal"
-          size="small"
-          required
-        />
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'space-between' }}>
         <Button type="submit" variant="contained" color="primary">
-          Зарегистрироваться
+          Отправить письмо
         </Button>
         <Button onClick={handleClose} color="primary">
           Отмена
