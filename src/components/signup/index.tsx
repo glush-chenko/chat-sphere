@@ -7,14 +7,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { registerUser } from '../../firebase/auth.ts';
+import { useLocalStorageState, useNotifications } from '@toolpad/core';
+import { BOOLEAN_CODEC } from '../../utils/booleanCodec.ts';
 
-interface SignupProps {
-  open: boolean,
-  handleClose: () => void;
-}
-
-export const Signup = (props: SignupProps) => {
-  const { open, handleClose } = props;
+export const Signup = () => {
+  const [value, setValue] = useLocalStorageState('open-signup', null, {
+    codec: BOOLEAN_CODEC,
+  });
+  const notifications = useNotifications();
 
   const handleRegister = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -25,16 +25,27 @@ export const Signup = (props: SignupProps) => {
 
     const response = await registerUser(email, password);
     if (response.error) {
-      console.error(response.error);
+      notifications.show(`${response.error}`, {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
     } else {
-      console.log(response.success);
+      setValue(null);
+      notifications.show(`${response.success}`, {
+        severity: "success",
+        autoHideDuration: 3000,
+      });
     }
-  }, []);
+  }, [notifications, setValue]);
+
+  const handleCloseSignup = useCallback(() => {
+    setValue(false);
+  }, [setValue])
 
   return (
     <Dialog
-      open={open}
-      onClose={handleClose}
+      open={!!value}
+      onClose={handleCloseSignup}
       slotProps={{
         paper: {
           component: 'form',
@@ -74,7 +85,7 @@ export const Signup = (props: SignupProps) => {
         <Button type="submit" variant="contained" color="primary">
           Зарегистрироваться
         </Button>
-        <Button onClick={handleClose} color="primary">
+        <Button onClick={handleCloseSignup} color="primary">
           Отмена
         </Button>
       </DialogActions>

@@ -8,18 +8,14 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { firebaseAuth } from '../../firebase/firebase-config.ts';
-import { useNotifications } from '@toolpad/core';
-import { useNavigate } from 'react-router';
+import { useLocalStorageState, useNotifications } from '@toolpad/core';
+import { BOOLEAN_CODEC } from '../../utils/booleanCodec.ts';
 
-interface ForgotPassProps {
-  open: boolean,
-  handleClose: () => void;
-}
-
-export const ForgotPass = (props: ForgotPassProps) => {
-  const { open, handleClose } = props;
+export const ForgotPass = () => {
   const notifications = useNotifications();
-  const navigate = useNavigate();
+  const [value, setValue] = useLocalStorageState('open-forgot-password', null, {
+    codec: BOOLEAN_CODEC,
+  });
 
   const handleForgotPass = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,18 +30,29 @@ export const ForgotPass = (props: ForgotPassProps) => {
         autoHideDuration: 3000,
       });
     } catch (error) {
-      notifications.show('Ошибка при отправке письма', {
-        severity: 'error',
-        autoHideDuration: 3000,
-      });
+      if (error instanceof Error) {
+        notifications.show(`${error.message}`, {
+          severity: 'error',
+          autoHideDuration: 3000,
+        });
+      } else {
+        notifications.show('Произошла неизвестная ошибка.', {
+          severity: 'error',
+          autoHideDuration: 3000,
+        });
+      }
     }
-    navigate('../');
-  }, [navigate, notifications]);
+    setValue(null);
+  }, [notifications, setValue]);
+
+  const handleCloseForgotPass = useCallback(() => {
+    setValue(false);
+  }, [setValue]);
 
   return (
     <Dialog
-      open={open}
-      onClose={handleClose}
+      open={!!value}
+      onClose={handleCloseForgotPass}
       slotProps={{
         paper: {
           component: 'form',
@@ -77,7 +84,7 @@ export const ForgotPass = (props: ForgotPassProps) => {
         <Button type="submit" variant="contained" color="primary">
           Отправить письмо
         </Button>
-        <Button onClick={handleClose} color="primary">
+        <Button onClick={handleCloseForgotPass} color="primary">
           Отмена
         </Button>
       </DialogActions>
