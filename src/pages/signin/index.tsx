@@ -23,7 +23,7 @@ export const SignIn = () => {
 
   const signIn = useCallback(async (
     provider: AuthProvider,
-    formData: any,
+    formData: FormData,
     callbackUrl: string | undefined,
   ): Promise<AuthResponse> => {
     let result;

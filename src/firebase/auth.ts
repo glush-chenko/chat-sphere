@@ -9,6 +9,7 @@ import {
 import { firebaseAuth } from './firebase-config.ts';
 import { AuthResponse } from '@toolpad/core';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -72,7 +73,7 @@ export const firebaseSignOut = async () => {
 };
 
 // Auth state observer
-export const onAuthStateChanged = (callback: (user: any) => void) => {
+export const onAuthStateChanged = (callback: (user: User | null) => void) => {
   return firebaseAuth.onAuthStateChanged(callback);
 };
 

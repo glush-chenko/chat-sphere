@@ -20,6 +20,7 @@ export const ForgotPass = () => {
   const handleForgotPass = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    // eslint-disable-next-line
     const formJson = Object.fromEntries((formData as any).entries());
     const email = formJson.email;
 
