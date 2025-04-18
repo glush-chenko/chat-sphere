@@ -9,6 +9,7 @@ import {
 import { firebaseAuth } from './firebase-config.ts';
 import { AuthResponse } from '@toolpad/core';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -23,12 +24,14 @@ export const signInWithGoogle = async () => {
         error: null,
       };
     });
-  } catch (error: any) {
-    return {
-      success: false,
-      user: null,
-      error: error.message,
-    };
+  } catch (error) {
+    if (error instanceof  Error) {
+      return {
+        success: false,
+        user: null,
+        error: error.message,
+      };
+    }
   }
 };
 
@@ -43,12 +46,14 @@ export async function signInWithCredentials(email: string, password: string) {
         error: null,
       };
     });
-  } catch (error: any) {
-    return {
-      success: false,
-      user: null,
-      error: 'Failed to sign in with email/password',
-    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        user: null,
+        error: error.message || 'Failed to sign in with email/password',
+      };
+    }
   }
 }
 
@@ -57,16 +62,18 @@ export const firebaseSignOut = async () => {
   try {
     await signOut(firebaseAuth);
     return { success: true };
-  } catch (error: any) {
-    return {
-      success: false,
-      error: error.message,
-    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
   }
 };
 
 // Auth state observer
-export const onAuthStateChanged = (callback: (user: any) => void) => {
+export const onAuthStateChanged = (callback: (user: User | null) => void) => {
   return firebaseAuth.onAuthStateChanged(callback);
 };
 
@@ -85,6 +92,10 @@ export const registerUser = async (
       error: '',
     };
   } catch (error) {
-    return { error: 'Произошла ошибка регистрации' };
+    if (error instanceof Error && error.message === "Firebase: Error (auth/email-already-in-use).") {
+      return { error: 'Такой email уже используется.' };
+    } else {
+      throw error;
+    }
   }
 };

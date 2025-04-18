@@ -10,7 +10,7 @@ export const AppTitle = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged((user: User) => {
+    const unsubscribe = onAuthStateChanged((user: User | null) => {
       if (user && !user.emailVerified) {
         setShowAlert(true);
       } else {

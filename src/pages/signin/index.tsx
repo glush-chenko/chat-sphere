@@ -7,23 +7,23 @@ import { PasswordField } from '../../components/auth/password-field.tsx';
 import { EmailField } from '../../components/auth/email-field.tsx';
 import backgroundImage from '../../assets/backg.png';
 import { SubmitButton } from '../../components/auth/submit-button.tsx';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import 'firebase/compat/auth';
 import { AuthProvider, AuthResponse } from '@toolpad/core';
 import { firebaseAuth } from '../../firebase/firebase-config.ts';
 import { RecaptchaVerifier } from 'firebase/auth';
-import { ForgotPasswordLink } from '../../components/auth/forgot-password-link.tsx';
 import { Signup } from '../../components/signup';
-import Link from '@mui/material/Link';
+import { ForgotPass } from '../../components/forgot-pass';
+import { ForgotPasswordLink } from '../../components/auth/forgot-password-link.tsx';
+import { SignUpLink } from '../../components/auth/sign-up-link.tsx';
 
 export const SignIn = () => {
   const { session, setSession, loading } = useSession();
   const navigate = useNavigate();
-  const [openSignup, setOpenSignup] = useState(false);
 
   const signIn = useCallback(async (
     provider: AuthProvider,
-    formData: any,
+    formData: FormData,
     callbackUrl: string | undefined,
   ): Promise<AuthResponse> => {
     let result;
@@ -32,13 +32,12 @@ export const SignIn = () => {
 
       const recaptchaContainer = document.getElementById('recaptcha-container');
       if (recaptchaContainer) {
-        recaptchaContainer.style.display = "unset";
+        recaptchaContainer.style.display = 'unset';
       }
       await recaptchaVerifier.render();
       await recaptchaVerifier.verify();
 
       if (provider.id === 'google') {
-        // result = await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
         result = await signInWithGoogle();
       }
       if (provider.id === 'credentials') {
@@ -49,7 +48,6 @@ export const SignIn = () => {
           return { error: 'Почта и пароль обязательны' };
         }
 
-        // result = await signInWithEmailAndPassword(firebaseAuth, email, password);
         result = await signInWithCredentials(email, password);
       }
 
@@ -68,7 +66,11 @@ export const SignIn = () => {
       }
       return { error: 'Не удалось войти в систему' };
     } catch (error) {
-      return { error: 'Произошла ошибка входа в систему' };
+      if (error instanceof Error) {
+        return { error: error.message };
+      } else {
+        throw error;
+      }
     } finally {
       const recaptchaContainer = document.getElementById('recaptcha-container');
       if (recaptchaContainer) {
@@ -76,14 +78,6 @@ export const SignIn = () => {
       }
     }
   }, [navigate, setSession]);
-
-  const handleOpenSignup = useCallback(() => {
-    setOpenSignup(true);
-  }, []);
-
-  const handleCloseSignup = useCallback(() => {
-    setOpenSignup(false);
-  }, []);
 
   if (loading) {
     return <LinearProgress />;
@@ -119,13 +113,7 @@ export const SignIn = () => {
           emailField: EmailField,
           passwordField: PasswordField,
           submitButton: SubmitButton,
-          signUpLink: () => {
-            return (
-              <Link variant="body2" onClick={handleOpenSignup} sx={{ cursor: 'pointer' }}>
-                Регистрация
-              </Link>
-            );
-          },
+          signUpLink: SignUpLink,
           rememberMe: () => <></>,
           forgotPasswordLink: ForgotPasswordLink,
         }}
@@ -136,7 +124,8 @@ export const SignIn = () => {
         }}
       />
 
-      <Signup open={openSignup} handleClose={handleCloseSignup} />
+      <Signup />
+      <ForgotPass />
     </>
   );
 };
