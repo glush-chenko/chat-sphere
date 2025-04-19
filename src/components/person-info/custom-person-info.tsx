@@ -2,8 +2,8 @@ import { PersonInfoCard } from './person-info-card';
 import Paper from '@mui/material/Paper';
 import userStore, { UserData } from '../../stores/user-store/user-store.ts';
 import { observer } from 'mobx-react-lite';
-import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import Skeleton from '@mui/material/Skeleton';
 
 const FIELDS:
   Array<{ field: keyof UserData; headerName: string; type?: string }>
@@ -21,10 +21,10 @@ const FIELDS:
     headerName: 'Возраст',
     type: 'number',
   },
-  {
-    field: 'status',
-    headerName: 'Статус',
-  },
+  // {
+  //   field: 'status',
+  //   headerName: 'Статус',
+  // },
   {
     field: 'aboutMyself',
     headerName: 'О себе',
@@ -34,8 +34,15 @@ const FIELDS:
 export const CustomPersonInfo = observer(() => {
   if (userStore.loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress color="secondary" />
+      <Box sx={{ display: 'flex', gap: '1rem' }}>
+        {Array.from({ length: 3 }, (_, index) => (
+          <Skeleton
+            key={index}
+            variant="rectangular"
+            width={352}
+            height={95}
+          />
+        ))}
       </Box>
     );
   }

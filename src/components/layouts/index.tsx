@@ -4,8 +4,11 @@ import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { PageContainer } from '@toolpad/core/PageContainer';
 import { Account } from '@toolpad/core/Account';
 
-import { useSession } from '../../Session-context.tsx';
+import { useSession } from '../../context/session-context.tsx';
 import { AppTitle } from './app-title.tsx';
+import { useEffect } from 'react';
+import { firebaseAuth } from '../../firebase/firebase-config.ts';
+import { PageHeaderComponent } from './page-header-component.tsx';
 
 function CustomAccount() {
   return (
@@ -27,6 +30,30 @@ function CustomAccount() {
 export const Layout = () => {
   const { session, loading } = useSession();
   const location = useLocation();
+  const path = location.pathname;
+
+  const isAnonymous = firebaseAuth.currentUser?.isAnonymous;
+
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(() => {
+        const element = document.querySelector('[aria-label="Expand navigation menu"]');
+        if (element) {
+          element.remove();
+          observer.disconnect();
+        }
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -43,13 +70,17 @@ export const Layout = () => {
     return <Navigate to={redirectTo} replace />;
   }
 
+  if (path === '/person-info' && isAnonymous) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <DashboardLayout
       slots={{
         toolbarAccount: CustomAccount,
         appTitle: AppTitle,
       }}
-      hideNavigation
+      defaultSidebarCollapsed
       sx={{
         '& .MuiToolbar-root': {
           '& .MuiStack-root:first-child': {
@@ -60,9 +91,16 @@ export const Layout = () => {
             },
           },
         },
+        '& .MuiList-root': {
+          '& .MuiListItem-root ': {
+            '& .MuiButtonBase-root': {
+              pointerEvents: isAnonymous ? 'none' : 'auto',
+            },
+          },
+        },
       }}
     >
-      <PageContainer>
+      <PageContainer sx={{ alignItems: 'center' }} slots={{ header: PageHeaderComponent }}>
         <Outlet />
       </PageContainer>
     </DashboardLayout>
