@@ -11,7 +11,7 @@
   left: 40%;
   right: 0;
   bottom: 0;
-  z-index: 1000;
+  z-index: 10000;
   width: 304px;
   height: 78px;
 }

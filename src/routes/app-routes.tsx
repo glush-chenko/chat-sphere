@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import { App } from '../App.tsx';
 import { SignIn as SignInPage } from '../pages/signin/index.tsx';
 import { Layout } from '../components/layouts';
+import { CustomPersonInfo } from '../components/person-info/custom-person-info.tsx';
 
 export const ROUTER = createBrowserRouter([
   {
@@ -10,12 +11,12 @@ export const ROUTER = createBrowserRouter([
       {
         path: '/',
         Component: Layout,
-        // children: [
-        //   {
-        //     path: '',
-        //     Component: ,
-        //   },
-        // ],
+        children: [
+          {
+            path: 'person-info',
+            Component: CustomPersonInfo,
+          },
+        ],
       },
       {
         path: '/sign-in',
