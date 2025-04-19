@@ -4,13 +4,19 @@ import { database } from '../../firebase/firebase-config.ts';
 import { onAuthStateChanged } from '../../firebase/auth.ts';
 import type { User } from 'firebase/auth';
 
+type UserStatus =
+  | "active"
+  | "away"
+  | "offline"
+  | "busy";
+
 export interface UserData {
   id: string;
   username: string;
   email: string;
   profile_picture: string;
   age?: number;
-  status?: string;
+  status?: UserStatus;
   aboutMyself?: string;
 }
 
@@ -43,7 +49,9 @@ class UserStore {
     } catch (error) {
       console.error('Ошибка при чтении данных:', error);
     } finally {
-      this.loading = false;
+      runInAction(() => {
+        this.loading = false;
+      });
     }
   }
 }

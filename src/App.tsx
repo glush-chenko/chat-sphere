@@ -6,14 +6,8 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Authentication } from '@toolpad/core/AppProvider';
 import type { User } from 'firebase/auth';
 import { firebaseSignOut, onAuthStateChanged, signInWithGoogle } from './firebase/auth.ts';
-import logo from './assets/main-img.png';
 import { NAVIGATION } from './routes/navigation.tsx';
 // import {ruRU} from '@mui/material/locale';
-
-const BRANDING = {
-  logo: <img src={logo} alt="logo" width="40px" height="40px" />,
-  title: 'Chat Sphere',
-};
 
 const AUTHENTICATION: Authentication = {
   signIn: signInWithGoogle,
@@ -56,7 +50,6 @@ export const App = () => {
   return (
     <ReactRouterAppProvider
       navigation={NAVIGATION}
-      branding={BRANDING}
       session={session}
       authentication={AUTHENTICATION}
     >
