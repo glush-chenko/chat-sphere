@@ -6,11 +6,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { registerUser } from '../../../firebase/auth.ts';
 import { useLocalStorageState, useNotifications } from '@toolpad/core';
 import { BOOLEAN_CODEC } from '../../../utils/booleanCodec.ts';
 import { RecaptchaVerifier } from 'firebase/auth';
 import { firebaseAuth } from '../../../firebase/firebase-config.ts';
+import { registerUser } from '../../../firebase/registration.ts';
 
 export const Signup = () => {
   const [value, setValue] = useLocalStorageState('open-signup', null, {

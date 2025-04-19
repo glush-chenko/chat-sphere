@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { signInAnonymously, RecaptchaVerifier } from 'firebase/auth';
 import { firebaseAuth } from '../../firebase/firebase-config.ts';
-import { Session, useSession } from '../../Session-context.tsx';
+import { Session, useSession } from '../../context/session-context.tsx';
 import { useNavigate } from 'react-router';
 
 export const SubmitButton = () => {
