@@ -39,7 +39,7 @@ export const CustomPersonInfo = observer(() => {
           <Skeleton
             key={index}
             variant="rectangular"
-            width={352}
+            width={371}
             height={95}
           />
         ))}
@@ -54,6 +54,10 @@ export const CustomPersonInfo = observer(() => {
         display: 'flex',
         gap: '1rem',
         flexWrap: 'wrap',
+        justifyContent: {
+          xs: 'center',
+          lg: "space-between"
+        },
       }}
     >
       {FIELDS.map((field, index) => (

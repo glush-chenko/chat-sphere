@@ -17,7 +17,8 @@ export const PersonInfoCard = observer((props: personInfoCardProps) => {
       minWidth: {
         xs: '18rem',
         sm: '24rem',
-        md: '22rem',
+        md: '20rem;',
+        lg: "21.6rem",
       },
     }}>
       <CardContent>

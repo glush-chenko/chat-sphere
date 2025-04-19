@@ -100,7 +100,13 @@ export const Layout = () => {
         },
       }}
     >
-      <PageContainer sx={{ alignItems: 'center' }} slots={{ header: PageHeaderComponent }}>
+      <PageContainer slots={{ header: PageHeaderComponent }} sx={{
+        '& .MuiStack-root': {
+          '& .css-lc31tn': {
+            flexDirection: 'column',
+          },
+        },
+      }}>
         <Outlet />
       </PageContainer>
     </DashboardLayout>
