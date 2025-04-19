@@ -1,7 +1,7 @@
 import LinearProgress from '@mui/material/LinearProgress';
 import { SignInPage } from '@toolpad/core/SignInPage';
 import { Navigate, useNavigate } from 'react-router';
-import { useSession, type Session } from '../../Session-context.tsx';
+import { useSession, type Session } from '../../context/session-context.tsx';
 import { signInWithCredentials, signInWithGoogle } from '../../firebase/auth.ts';
 import { PasswordField } from '../../components/auth/password-field.tsx';
 import { EmailField } from '../../components/auth/email-field.tsx';
@@ -12,8 +12,8 @@ import 'firebase/compat/auth';
 import { AuthProvider, AuthResponse } from '@toolpad/core';
 import { firebaseAuth } from '../../firebase/firebase-config.ts';
 import { RecaptchaVerifier } from 'firebase/auth';
-import { Signup } from '../../components/signup';
-import { ForgotPass } from '../../components/forgot-pass';
+import { Signup } from '../../components/auth/signup';
+import { ForgotPass } from '../../components/auth/forgot-pass';
 import { ForgotPasswordLink } from '../../components/auth/forgot-password-link.tsx';
 import { SignUpLink } from '../../components/auth/sign-up-link.tsx';
 

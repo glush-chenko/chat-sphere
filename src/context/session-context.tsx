@@ -1,4 +1,4 @@
-import {createContext, useContext} from "react";
+import { createContext, useContext } from 'react';
 
 export interface Session {
   user: {
@@ -16,7 +16,8 @@ interface SessionContextType {
 
 const SessionContext = createContext<SessionContextType>({
   session: null,
-  setSession: () => {},
+  setSession: () => {
+  },
   loading: true,
 });
 

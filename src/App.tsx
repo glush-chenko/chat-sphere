@@ -1,18 +1,13 @@
-import {ReactRouterAppProvider} from '@toolpad/core/react-router'
-import './App.css'
-import {Outlet} from 'react-router'
-import SessionContext, {type Session} from './Session-context.tsx';
-import {useEffect, useMemo, useState} from "react";
-import type {Authentication} from '@toolpad/core/AppProvider';
+import { ReactRouterAppProvider } from '@toolpad/core/react-router';
+import './App.css';
+import { Outlet } from 'react-router';
+import SessionContext, { type Session } from './context/session-context.tsx';
+import { useEffect, useMemo, useState } from 'react';
+import type { Authentication } from '@toolpad/core/AppProvider';
 import type { User } from 'firebase/auth';
-import {firebaseSignOut, onAuthStateChanged, signInWithGoogle} from "./firebase/auth.ts";
-import logo from "./assets/main-img.png"
+import { firebaseSignOut, onAuthStateChanged, signInWithGoogle } from './firebase/auth.ts';
+import { NAVIGATION } from './routes/navigation.tsx';
 // import {ruRU} from '@mui/material/locale';
-
-const BRANDING = {
-  logo: <img src={logo} alt="MUI logo" width="40px" height="40px"/>,
-  title: 'Chat Sphere',
-};
 
 const AUTHENTICATION: Authentication = {
   signIn: signInWithGoogle,
@@ -54,14 +49,13 @@ export const App = () => {
 
   return (
     <ReactRouterAppProvider
-      // navigation={NAVIGATION}
-      branding={BRANDING}
+      navigation={NAVIGATION}
       session={session}
       authentication={AUTHENTICATION}
     >
       <SessionContext.Provider value={sessionContextValue}>
-        <Outlet/>
+        <Outlet />
       </SessionContext.Provider>
     </ReactRouterAppProvider>
-  )
-}
+  );
+};

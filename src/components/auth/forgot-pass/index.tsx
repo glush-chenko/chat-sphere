@@ -6,59 +6,68 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { registerUser } from '../../firebase/auth.ts';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { firebaseAuth } from '../../../firebase/firebase-config.ts';
 import { useLocalStorageState, useNotifications } from '@toolpad/core';
-import { BOOLEAN_CODEC } from '../../utils/booleanCodec.ts';
+import { BOOLEAN_CODEC } from '../../../utils/booleanCodec.ts';
 
-export const Signup = () => {
-  const [value, setValue] = useLocalStorageState('open-signup', null, {
+export const ForgotPass = () => {
+  const notifications = useNotifications();
+  const [value, setValue] = useLocalStorageState('open-forgot-password', null, {
     codec: BOOLEAN_CODEC,
   });
-  const notifications = useNotifications();
 
-  const handleRegister = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+  const handleForgotPass = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     // eslint-disable-next-line
     const formJson = Object.fromEntries((formData as any).entries());
     const email = formJson.email;
-    const password = formJson.password;
 
-    const response = await registerUser(email, password);
-    if (response.error) {
-      notifications.show(`${response.error}`, {
-        severity: "error",
+    try {
+      await sendPasswordResetEmail(firebaseAuth, email);
+      notifications.show('Письмо для сброса пароля отправлено на ваш email.', {
+        severity: 'info',
         autoHideDuration: 3000,
       });
-    } else {
-      setValue(null);
-      notifications.show(`${response.success}`, {
-        severity: "success",
-        autoHideDuration: 3000,
-      });
+    } catch (error) {
+      if (error instanceof Error) {
+        notifications.show(`${error.message}`, {
+          severity: 'error',
+          autoHideDuration: 3000,
+        });
+      } else {
+        notifications.show('Произошла неизвестная ошибка.', {
+          severity: 'error',
+          autoHideDuration: 3000,
+        });
+      }
     }
+    setValue(null);
   }, [notifications, setValue]);
 
-  const handleCloseSignup = useCallback(() => {
+  const handleCloseForgotPass = useCallback(() => {
     setValue(false);
-  }, [setValue])
+  }, [setValue]);
 
   return (
     <Dialog
       open={!!value}
-      onClose={handleCloseSignup}
+      onClose={handleCloseForgotPass}
       slotProps={{
         paper: {
           component: 'form',
-          onSubmit: handleRegister,
+          onSubmit: handleForgotPass,
           sx: { padding: '1rem' },
         },
       }}
     >
-      <DialogTitle sx={{ textAlign: 'center', fontSize: '1.5rem' }}>Регистрация</DialogTitle>
+      <DialogTitle sx={{ textAlign: 'center', fontSize: '1.5rem' }}>
+        Восстановление пароля
+      </DialogTitle>
       <DialogContent>
         <DialogContentText sx={{ textAlign: 'center' }}>
-          Пожалуйста, введите свой email и пароль для регистрации.
+          Введите свой email для сброса.
         </DialogContentText>
         <TextField
           autoFocus
@@ -71,22 +80,12 @@ export const Signup = () => {
           margin="normal"
           required
         />
-        <TextField
-          label="Пароль"
-          type="password"
-          id="password"
-          name="password"
-          fullWidth
-          margin="normal"
-          size="small"
-          required
-        />
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'space-between' }}>
         <Button type="submit" variant="contained" color="primary">
-          Зарегистрироваться
+          Отправить письмо
         </Button>
-        <Button onClick={handleCloseSignup} color="primary">
+        <Button onClick={handleCloseForgotPass} color="primary">
           Отмена
         </Button>
       </DialogActions>

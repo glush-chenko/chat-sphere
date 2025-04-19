@@ -7,9 +7,8 @@ import {
   signOut,
 } from 'firebase/auth';
 import { firebaseAuth } from './firebase-config.ts';
-import { AuthResponse } from '@toolpad/core';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import type { User } from 'firebase/auth';
+import { writeUserData } from './database.ts';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -18,6 +17,11 @@ export const signInWithGoogle = async () => {
   try {
     return setPersistence(firebaseAuth, browserSessionPersistence).then(async () => {
       const result = await signInWithPopup(firebaseAuth, googleProvider);
+      const user = result.user;
+
+      // Add the user to the database
+      await writeUserData(user.uid, user.displayName, user.email, user.photoURL);
+
       return {
         success: true,
         user: result.user,
@@ -25,7 +29,7 @@ export const signInWithGoogle = async () => {
       };
     });
   } catch (error) {
-    if (error instanceof  Error) {
+    if (error instanceof Error) {
       return {
         success: false,
         user: null,
@@ -75,27 +79,4 @@ export const firebaseSignOut = async () => {
 // Auth state observer
 export const onAuthStateChanged = (callback: (user: User | null) => void) => {
   return firebaseAuth.onAuthStateChanged(callback);
-};
-
-export const registerUser = async (
-  email: string,
-  password: string,
-): Promise<AuthResponse> => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
-    const user = userCredential.user;
-
-    await sendEmailVerification(user);
-
-    return {
-      success: 'Регистрация успешна!',
-      error: '',
-    };
-  } catch (error) {
-    if (error instanceof Error && error.message === "Firebase: Error (auth/email-already-in-use).") {
-      return { error: 'Такой email уже используется.' };
-    } else {
-      throw error;
-    }
-  }
 };
